@@ -19,7 +19,7 @@ jobs:
           - { arch: x86_64,  cc: gcc,                      pkg: gcc }
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Install toolchain
       run: |
@@ -32,7 +32,7 @@ jobs:
         file dirtycow-${{ matrix.target.arch }}
     
     - name: Upload ${{ matrix.target.arch }} binary
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dirtycow-${{ matrix.target.arch }}
         path: dirtycow-${{ matrix.target.arch }}

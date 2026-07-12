@@ -1,0 +1,40 @@
+name: Build ARM 32-bit (armv7l)
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build-armv7:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install ARM toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-arm-linux-gnueabi libcrypt-dev
+    
+    - name: Compile for ARM 32-bit
+      run: |
+        arm-linux-gnueabi-gcc -Wall -O2 -o dirtycow-armv7l dirtycow.c -lpthread -lcrypt
+        file dirtycow-armv7l
+    
+    - name: Upload ARM binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: dirtycow-armv7l
+        path: dirtycow-armv7l
+    
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dirtycow-armv7l
+        tag_name: arm-v1.0.${{ github.run_number }}
+        name: Dirty Cow ARM 32-bit v1.0.${{ github.run_number }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
